@@ -1,5 +1,5 @@
 import { default as standings } from './assets/standings.json'
-import Table from "react-bootstrap/table"
+import Table from "react-bootstrap/Table"
 
 export function Standings() {
     const headers: Array<keyof typeof standings> = ["TEAM", "GP", "W", "L", "PF", "PA", "Road Wins", "BP*", "POINTS**"];
@@ -10,7 +10,7 @@ export function Standings() {
             <tr key={row}>
                 {headers.map(header => (
                     <td>
-                        {standings[header] ? standings[header][row] : "header"}
+                        {standings[header] ? standings[header][row] : ""}
                     </td>
                 ))}
             </tr>

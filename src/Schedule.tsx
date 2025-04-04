@@ -1,7 +1,6 @@
 import { FormControl, InputGroup, Table } from "react-bootstrap";
 import { default as schedule } from "./assets/schedule.json"
 import React from "react";
-import InputGroupText from "react-bootstrap/esm/InputGroupText";
 
 type ScheduleHeader = keyof typeof schedule
 type ScheduleRow = keyof typeof schedule["DATE"]
@@ -26,7 +25,7 @@ interface ManualGameScore {
 export function Schedule({ }: ScheduleProps) {
     const rows: Array<ScheduleRow> = Object.keys(schedule["DATE"]) as Array<ScheduleRow>;
 
-    const [manualScores, setManualScores] = React.useState<ManualGameScore[]>([]);
+    // const [manualScores, setManualScores] = React.useState<ManualGameScore[]>([]);
 
     return (
         <Table id="standings" striped bordered responsive>
@@ -36,13 +35,13 @@ export function Schedule({ }: ScheduleProps) {
                 </tr>
             </thead>
             <tbody>
-                {rows.map((row, index) => <GameDisplay row={row} setManualScore={(manualScore) => {}}/>)}
+                {rows.map((row) => <GameDisplay row={row} setManualScore={() => {}}/>)}
             </tbody>
         </Table>
     );
 }
 
-export function GameDisplay({ row, setManualScore }: { row: ScheduleRow, setManualScore: (manualScore: ManualGameScore) => void }) {
+export function GameDisplay({ row }: { row: ScheduleRow, setManualScore: (manualScore: ManualGameScore) => void }) {
     const canChange = schedule.SCORE[row] === "-";
 
     const [game, setGame] = React.useState<ManualGameScore>({
@@ -56,9 +55,40 @@ export function GameDisplay({ row, setManualScore }: { row: ScheduleRow, setManu
     })
     
     const buildForm = (header: ScheduleHeader) => {
-        const callback = (e: React.ChangeEvent) => { setManualScore() };
-        return <InputGroup><FormControl type="number" width={"20px"} id="inputGroup-sizing-sm" onChange={(e) => e.currentTarget.value} /><InputGroup.Checkbox /></InputGroup>
+        const onFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            console.log(e)
+            const newValue = e.target.value;
+            console.log(newValue)
+            const gameCopy = {
+                ...game
+            }
+            if (header === "SCORE") {
+                gameCopy.homeScore = parseInt(newValue);
+            } else if (header === "SCORE.1") {
+                gameCopy.awayScore = parseInt(newValue);
+            }
+            setGame(gameCopy);
+            console.log(gameCopy);
+        };
+
+        const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const newValue = e.target.nodeValue;
+            const gameCopy = {
+                ...game
+            }
+            if (header === "SCORE") {
+                gameCopy.homeTryPoint = Boolean(newValue);
+            } else if (header === "SCORE.1") {
+                gameCopy.homeTryPoint = Boolean(newValue);
+            }
+            setGame(gameCopy);
+            console.log(gameCopy);
+        };
+        return <InputGroup><FormControl type="number" width={"20px"} id="inputGroup-sizing-sm" onChange={onFormChange} /><InputGroup.Checkbox onChange={onCheckboxChange} /></InputGroup>
     }
+
+    const hasWinner = game.homeScore != game.awayScore;
+    const homeWins = game.homeScore > game.awayScore;
 
     return (
         <tr key={row}>
@@ -70,7 +100,11 @@ export function GameDisplay({ row, setManualScore }: { row: ScheduleRow, setManu
                 }
 
                 if (header === "HOME") {
-                    return (<td style={game.homeScore != game.awayScore ? {backgroundColor: game.homeScore < game.awayScore ? "red" : "green"} : {}}>
+                    return (<td style={hasWinner ? {backgroundColor: homeWins ? "green" : "red"} : {}}>
+                        {schedule[header][row]}
+                    </td>)
+                } else if (header === "AWAY") {
+                    return (<td style={hasWinner ? {backgroundColor: !homeWins ? "green" : "red"} : {}}>
                         {schedule[header][row]}
                     </td>)
                 }

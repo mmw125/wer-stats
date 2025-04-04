@@ -19,7 +19,7 @@ export function Standings() {
 
     return (
         <div>
-            <Table id="standings" striped bordered responsive >
+            <Table id="standings" striped bordered responsive>
                 <thead>
                     <tr>
                         {headers.map(key => (<th>{key}</th>))}

@@ -1,4 +1,5 @@
 import './App.css';
+import { Schedule } from './Schedule';
 import { Standings } from './Standings';
 
 export default function App() {
@@ -7,6 +8,8 @@ export default function App() {
     <>
       <h1>Current Standings</h1>
       <Standings />
+      <h1>Schedule</h1>
+      <Schedule />
     </>
   )
 }

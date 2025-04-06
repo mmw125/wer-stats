@@ -9,10 +9,10 @@ const headerTranslation: Map<ScheduleHeader, string> = new Map([["SCORE.1", "SCO
 const headers: Array<ScheduleHeader> = ["DATE", "HOME", "SCORE", "AWAY", "SCORE.1"];
 
 export interface ScheduleProps {
-    modifyStandings?: () => void;
+    modifyStandings: (manualScores: ManualGameScore[]) => void;
 }
 
-interface ManualGameScore {
+export interface ManualGameScore {
     homeTeam: string;
     homeScore: number;
     homeTryPoint: boolean;
@@ -22,10 +22,29 @@ interface ManualGameScore {
     awayTryPoint: boolean;
 }
 
-export function Schedule({ }: ScheduleProps) {
+function buildManualGameScore(): ManualGameScore {
+    return {
+        homeTeam: "",
+        homeScore: 0,
+        homeTryPoint: false,
+        awayTeam: "",
+        awayScore: 0,
+        awayTryPoint: false,
+    }
+}
+
+export function Schedule({ modifyStandings }: ScheduleProps) {
     const rows: Array<ScheduleRow> = Object.keys(schedule["DATE"]) as Array<ScheduleRow>;
 
-    // const [manualScores, setManualScores] = React.useState<ManualGameScore[]>([]);
+    const [manualScores, setManualScores] = React.useState<ManualGameScore[]>([]);
+
+    React.useEffect(() => {
+        const scores = [];
+        for (let i = 0; i < Object.keys(schedule.AWAY).length; i += 1) {
+            scores.push(buildManualGameScore());
+        }
+        setManualScores(scores);
+    }, [setManualScores])
 
     return (
         <Table id="standings" striped bordered responsive>
@@ -35,30 +54,33 @@ export function Schedule({ }: ScheduleProps) {
                 </tr>
             </thead>
             <tbody>
-                {rows.map((row) => <GameDisplay row={row} setManualScore={() => {}}/>)}
+                {rows.map((row, i) => <GameDisplay row={row} setManualScore={(manualScore) => {
+                    const newScores = [...manualScores];
+                    newScores[i] = manualScore;
+                    setManualScores(newScores);
+                    modifyStandings(newScores);
+                }} />)}
             </tbody>
         </Table>
     );
 }
 
-export function GameDisplay({ row }: { row: ScheduleRow, setManualScore: (manualScore: ManualGameScore) => void }) {
+export function GameDisplay({ row, setManualScore }: { row: ScheduleRow, setManualScore: (manualScore: ManualGameScore) => void }) {
     const canChange = schedule.SCORE[row] === "-";
 
     const [game, setGame] = React.useState<ManualGameScore>({
         homeTeam: schedule["HOME"][row],
         homeScore: canChange ? 0 : parseInt(schedule["SCORE"][row]),
         homeTryPoint: false,
-    
+
         awayTeam: schedule["AWAY"][row],
         awayScore: canChange ? 0 : parseInt(schedule["SCORE.1"][row]),
         awayTryPoint: false
-    })
-    
+    });
+
     const buildForm = (header: ScheduleHeader) => {
         const onFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            console.log(e)
             const newValue = e.target.value;
-            console.log(newValue)
             const gameCopy = {
                 ...game
             }
@@ -68,11 +90,11 @@ export function GameDisplay({ row }: { row: ScheduleRow, setManualScore: (manual
                 gameCopy.awayScore = parseInt(newValue);
             }
             setGame(gameCopy);
-            console.log(gameCopy);
+            setManualScore(game)
         };
 
         const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            const newValue = e.target.nodeValue;
+            const newValue = e.target.value == "on";
             const gameCopy = {
                 ...game
             }
@@ -82,7 +104,7 @@ export function GameDisplay({ row }: { row: ScheduleRow, setManualScore: (manual
                 gameCopy.homeTryPoint = Boolean(newValue);
             }
             setGame(gameCopy);
-            console.log(gameCopy);
+            setManualScore(game)
         };
         return <InputGroup><FormControl type="number" width={"20px"} id="inputGroup-sizing-sm" onChange={onFormChange} /><InputGroup.Checkbox onChange={onCheckboxChange} /></InputGroup>
     }
@@ -91,7 +113,7 @@ export function GameDisplay({ row }: { row: ScheduleRow, setManualScore: (manual
     const homeWins = game.homeScore > game.awayScore;
 
     return (
-        <tr key={row}>
+        <tr key={row + "game"}>
             {headers.map(header => {
                 if (header === "SCORE") {
                     return (<td>{canChange ? buildForm(header) : schedule[header][row]}</td>)
@@ -100,11 +122,11 @@ export function GameDisplay({ row }: { row: ScheduleRow, setManualScore: (manual
                 }
 
                 if (header === "HOME") {
-                    return (<td style={hasWinner ? {backgroundColor: homeWins ? "green" : "red"} : {}}>
+                    return (<td style={hasWinner ? { backgroundColor: homeWins ? "green" : "red" } : {}}>
                         {schedule[header][row]}
                     </td>)
                 } else if (header === "AWAY") {
-                    return (<td style={hasWinner ? {backgroundColor: !homeWins ? "green" : "red"} : {}}>
+                    return (<td style={hasWinner ? { backgroundColor: !homeWins ? "green" : "red" } : {}}>
                         {schedule[header][row]}
                     </td>)
                 }

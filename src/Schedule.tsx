@@ -59,7 +59,7 @@ export function Schedule({ modifyStandings }: ScheduleProps) {
                     const newScores = [...manualScores];
                     newScores[i] = manualScore;
                     setManualScores(newScores);
-                    modifyStandings(newScores);
+                    modifyStandings(newScores.filter(score => score.homeTeam != ""));
                 }} />)}
             </tbody>
         </Table>
@@ -91,21 +91,21 @@ export function GameDisplay({ row, setManualScore }: { row: ScheduleRow, setManu
                 gameCopy.awayScore = parseInt(newValue);
             }
             setGame(gameCopy);
-            setManualScore(game)
+            setManualScore(gameCopy)
         };
 
         const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            const newValue = e.target.value == "on";
+            const newValue = e.target.checked;
             const gameCopy = {
                 ...game
             }
             if (header === "SCORE") {
-                gameCopy.homeTryPoint = Boolean(newValue);
+                gameCopy.homeTryPoint = newValue;
             } else if (header === "SCORE.1") {
-                gameCopy.homeTryPoint = Boolean(newValue);
+                gameCopy.awayTryPoint = newValue;
             }
             setGame(gameCopy);
-            setManualScore(game)
+            setManualScore(gameCopy)
         };
         return <InputGroup><FormControl type="number" width={"20px"} id="inputGroup-sizing-sm" onChange={onFormChange} /><InputGroup.Checkbox onChange={onCheckboxChange} /></InputGroup>
     }

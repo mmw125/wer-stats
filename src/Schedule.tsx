@@ -44,6 +44,7 @@ export function Schedule({ modifyStandings }: ScheduleProps) {
             scores.push(buildManualGameScore());
         }
         setManualScores(scores);
+        modifyStandings(scores);
     }, [setManualScores])
 
     return (
@@ -54,7 +55,7 @@ export function Schedule({ modifyStandings }: ScheduleProps) {
                 </tr>
             </thead>
             <tbody>
-                {rows.map((row, i) => <GameDisplay row={row} setManualScore={(manualScore) => {
+                {rows.map((row, i) => <GameDisplay key={row+"key"} row={row} setManualScore={(manualScore) => {
                     const newScores = [...manualScores];
                     newScores[i] = manualScore;
                     setManualScores(newScores);

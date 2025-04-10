@@ -86,9 +86,9 @@ export function GameDisplay({ row, setManualScore }: { row: ScheduleRow, setManu
                 ...game
             }
             if (header === "SCORE") {
-                gameCopy.homeScore = parseInt(newValue);
+                gameCopy.homeScore = parseInt(newValue ? newValue : "0");
             } else if (header === "SCORE.1") {
-                gameCopy.awayScore = parseInt(newValue);
+                gameCopy.awayScore = parseInt(newValue ? newValue : "0");
             }
             setGame(gameCopy);
             setManualScore(gameCopy)

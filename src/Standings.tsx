@@ -24,7 +24,7 @@ export function Standings({ manualScores }: { manualScores: ManualGameScore[] })
         const newModifiers: {[K in string]: Modifier} = { };
 
         manualScores.forEach(score => {
-            if (score.homeTeam === "") {
+            if (score.homeTeam === "" || score.homeScore === score.awayScore) {
                 return;
             }
             const home = newModifiers[score.homeTeam] ?? buildModifier();

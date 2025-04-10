@@ -30,6 +30,8 @@ export function Standings({ manualScores }: { manualScores: ManualGameScore[] })
             const home = newModifiers[score.homeTeam] ?? buildModifier();
             const away = newModifiers[score.homeTeam] ?? buildModifier();
 
+            home['GP'] += 1;
+            away['GP'] += 1;
             home['+/-'] += score.homeScore - score.awayScore;
             away['+/-'] += score.awayScore - score.homeScore;
             home['BP*'] += score.homeTryPoint ? 1 : 0;

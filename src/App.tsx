@@ -10,6 +10,7 @@ export default function App() {
       <h1>Current Standings</h1>
       <Standings manualScores={manualScores} />
       <h1>Schedule</h1>
+      * Checkbox represents Try Bonus Point
       <Schedule modifyStandings={setManualScores} />
     </>
   )

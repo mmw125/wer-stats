@@ -28,7 +28,7 @@ export function Standings({ manualScores }: { manualScores: ManualGameScore[] })
                 return;
             }
             const home = newModifiers[score.homeTeam] ?? buildModifier();
-            const away = newModifiers[score.homeTeam] ?? buildModifier();
+            const away = newModifiers[score.awayTeam] ?? buildModifier();
 
             home['GP'] += 1;
             away['GP'] += 1;

@@ -30,7 +30,7 @@ function buildManualGameScore(row: ScheduleRow): ManualGameScore {
     const happened = schedule["SCORE"][row] !== "-";
     const homeScore = happened ? parseInt(schedule["SCORE"][row]) : badTeams.includes(schedule["AWAY"][row]) ? 30 : 0;
     const homeTryPoint = badTeams.includes(schedule["AWAY"][row]);
-    const awayScore = happened ? parseInt(schedule["SCORE"][row]) : badTeams.includes(schedule["HOME"][row]) ? 30 : 0;
+    const awayScore = happened ? parseInt(schedule["SCORE.1"][row]) : badTeams.includes(schedule["HOME"][row]) ? 30 : 0;
     const awayTryPoint = badTeams.includes(schedule["HOME"][row]);
 
     return {

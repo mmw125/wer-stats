@@ -35,7 +35,7 @@ export function Standings({ manualScores }: { manualScores: ManualGameScore[] })
 
 
         manualScores.forEach(score => {
-            if (score.homeTeam === "" || score.homeScore === score.awayScore) {
+            if (score.happened === true || score.homeScore === score.awayScore) {
                 return;
             }
             const home = newScores[score.homeTeam];

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 type StandingsHeaders = keyof typeof standings;
 type Row = keyof typeof standings["TEAM"]
 
-type Score = { [K in Exclude<StandingsHeaders, "TEAM">]: number } & { "TEAM": string };
+type Score = { [K in Exclude<StandingsHeaders, "TEAM" | "COLOR">]: number } & { "TEAM": string } & { "COLOR": string };
 
 type Scores = {
     [K in string]: Score
@@ -14,7 +14,7 @@ type Scores = {
 
 function buildScore(row: Row): Score {
     return {
-        TEAM: standings.TEAM[row], GP: standings.GP[row], W: standings.W[row], L: standings.L[row], "BP*": standings['BP*'][row], "POINTS**": standings['POINTS**'][row], "Road Wins": standings["Road Wins"][row], "+/-": standings["+/-"][row]
+        TEAM: standings.TEAM[row], GP: standings.GP[row], W: standings.W[row], L: standings.L[row], "BP*": standings['BP*'][row], "POINTS**": standings['POINTS**'][row], "Road Wins": standings["Road Wins"][row], "+/-": standings["+/-"][row], COLOR: standings["COLOR"][row]
     }
 }
 
@@ -101,10 +101,10 @@ function StandingRow({ row, scores }: { row: keyof typeof standings["TEAM"], sco
     const teamName = standings.TEAM[row];
     const score = scores[teamName] ?? buildScore(row);
     return (
-        <tr key={row}>
+        <tr key={row} >
             {headers.map(header => {
                 return (
-                    <td>
+                    <td style={header == "TEAM" ? { backgroundColor: standings["COLOR"][row] } : {}}>
                         {score[header]}
                     </td>);
             })}

@@ -1,9 +1,10 @@
 #root {
   max-width: 1280px;
-   margin: 0 auto;
-   padding: 2rem; 
-   text-align: center; 
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
   display: table-cell;
+  background-color: #9534ce;
 }
 
 .card {
@@ -13,7 +14,7 @@
 
 @-moz-document url-prefix() {
   fieldset {
-      display: table-cell;
+    display: table-cell;
   }
 }
 

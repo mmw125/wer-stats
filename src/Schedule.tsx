@@ -34,6 +34,7 @@ export interface ManualGameScore {
     awayTryPoint: boolean;
 
     happened: boolean;
+    locked: boolean;
 }
 
 function buildManualGameScore(row: ScheduleRow): ManualGameScore {
@@ -60,6 +61,7 @@ function buildManualGameScore(row: ScheduleRow): ManualGameScore {
         awayScore,
         awayTryPoint,
         happened,
+        locked: happened
     };
 
     switch (row) {
@@ -67,16 +69,19 @@ function buildManualGameScore(row: ScheduleRow): ManualGameScore {
             score.homeScore = 76;
             score.awayScore = 7;
             score.homeTryPoint = true;
+            score.locked = true;
             break;
         case "9":
             score.homeScore = 19;
             score.awayScore = 39;
             score.awayTryPoint = true;
+            score.locked = true;
             break;
         case "10":
-            score.homeScore = 24;
-            score.awayScore = 20;
-            score.homeTryPoint = true;
+            score.homeScore = 20;
+            score.awayScore = 24;
+            score.awayTryPoint = true;
+            score.locked = true;
             break;
         case "24":
             score.homeScore = 5;
@@ -144,7 +149,7 @@ export function GameDisplay({
     game: ManualGameScore;
     setManualScore: (manualScore: ManualGameScore) => void;
 }) {
-    const { happened } = game;
+    const { happened, locked } = game;
     const buildForm = (header: ScheduleHeader) => {
         const onFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const newValue = e.target.value;
@@ -197,16 +202,16 @@ export function GameDisplay({
         <tr key={game.date + " " + game.homeTeam}>
             {headers.map((header) => {
                 if (header === "SCORE") {
-                    return <td>{happened ? game.homeScore : buildForm(header)}</td>;
+                    return <td>{happened || locked ? game.homeScore : buildForm(header)}</td>;
                 } else if (header === "SCORE.1") {
-                    return <td>{happened ? game.awayScore : buildForm(header)}</td>;
+                    return <td>{happened || locked ? game.awayScore : buildForm(header)}</td>;
                 }
 
                 if (header === "HOME") {
                     return (
                         <td
                             style={
-                                hasWinner ? { backgroundColor: homeWins ? GREEN : RED } : {}
+                                hasWinner && homeWins ? { backgroundColor: GREEN } : {}
                             }
                         >
                             {game.homeTeam}
@@ -216,8 +221,8 @@ export function GameDisplay({
                     return (
                         <td
                             style={
-                                hasWinner
-                                    ? { backgroundColor: !homeWins ? GREEN : RED }
+                                hasWinner && !homeWins
+                                    ? { backgroundColor: GREEN }
                                     : {}
                             }
                         >

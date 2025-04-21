@@ -16,6 +16,8 @@ const headers: Array<ScheduleHeader> = [
     "SCORE.1",
 ];
 const badTeams = ["TC Gemini", "Chicago Tempest"];
+const RED = "#E46464";
+const GREEN = "#BAE464"
 
 export interface ScheduleProps {
     modifyStandings: (manualScores: ManualGameScore[]) => void;
@@ -204,7 +206,7 @@ export function GameDisplay({
                     return (
                         <td
                             style={
-                                hasWinner ? { backgroundColor: homeWins ? "green" : "red" } : {}
+                                hasWinner ? { backgroundColor: homeWins ? GREEN : RED } : {}
                             }
                         >
                             {game.homeTeam}
@@ -215,7 +217,7 @@ export function GameDisplay({
                         <td
                             style={
                                 hasWinner
-                                    ? { backgroundColor: !homeWins ? "green" : "red" }
+                                    ? { backgroundColor: !homeWins ? GREEN : RED }
                                     : {}
                             }
                         >

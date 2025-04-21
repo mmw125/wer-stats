@@ -16,7 +16,7 @@ const headers: Array<ScheduleHeader> = [
     "SCORE.1",
 ];
 const badTeams = ["TC Gemini", "Chicago Tempest"];
-const RED = "#E46464";
+// const RED = "#E46464";
 const GREEN = "#BAE464"
 
 export interface ScheduleProps {
@@ -176,22 +176,33 @@ export function GameDisplay({
             }
             setManualScore(gameCopy);
         };
+
         return (
-            <InputGroup>
-                <FormControl
-                    type="number"
-                    width={"20px"}
-                    id="inputGroup-sizing-sm"
-                    onChange={onFormChange}
-                    defaultValue={header === "SCORE" ? game.homeScore : game.awayScore}
-                />
-                <InputGroup.Checkbox
-                    onChange={onCheckboxChange}
-                    defaultChecked={
-                        header === "SCORE" ? game.homeTryPoint : game.awayTryPoint
-                    }
-                />
-            </InputGroup>
+            <>
+                <InputGroup>
+                    <FormControl
+                        type="number"
+                        width={"20px"}
+                        id="inputGroup-sizing-sm"
+                        onChange={onFormChange}
+                        defaultValue={header === "SCORE" ? game.homeScore : game.awayScore}
+                    />
+                </InputGroup>
+                <InputGroup style={{
+                    display: "block",
+                    "marginLeft": "auto",
+                    "marginRight": "auto"
+                }}>
+
+                    <InputGroup.Checkbox
+
+                        onChange={onCheckboxChange}
+                        defaultChecked={
+                            header === "SCORE" ? game.homeTryPoint : game.awayTryPoint
+                        }
+                    />
+                </InputGroup >
+            </>
         );
     };
 

@@ -23,7 +23,7 @@ const rows: Array<Row> = Object.keys(standings["TEAM"]) as Array<keyof typeof st
 
 
 export function Standings({ manualScores }: { manualScores: ManualGameScore[] }) {
-    const [scores, setScores] = useState<Scores>({});
+    const [sortedScores, setSortedScores] = useState<Score[]>([]);
 
     useEffect(() => {
         const newScores: Scores = {};
@@ -77,34 +77,43 @@ export function Standings({ manualScores }: { manualScores: ManualGameScore[] })
             }
 
         })
-        // console.log(newModifiers); 
-        setScores(newScores);
-    }, [manualScores, setScores])
+
+        const scoresList = [...Object.values(newScores)];
+        scoresList.sort((a, b) => {
+            if (a['POINTS**'] != b['POINTS**']) {
+                return b['POINTS**'] - a['POINTS**']
+            }
+            if (a['BP*'] != b['BP*']) {
+                return b['BP*'] - a['BP*']
+            }
+            return b['Road Wins'] - a['Road Wins']
+        })
+        setSortedScores(scoresList);
+
+    }, [manualScores, setSortedScores])
 
     return (
         <div>
             <Table id="standings" striped bordered responsive>
                 <thead>
                     <tr>
-                        {headers.map(key => (<th>{key}</th>))}
+                        {headers.map(key => (<th key={key}>{key}</th>))}
                     </tr>
                 </thead>
                 <tbody>
-                    {rows.map(row => <StandingRow key={row} row={row} scores={scores} />)}
+                    {sortedScores.map(score => <StandingRow key={score.TEAM} score={score} />)}
                 </tbody>
             </Table>
         </div>
     );
 }
 
-function StandingRow({ row, scores }: { row: keyof typeof standings["TEAM"], scores: Scores }) {
-    const teamName = standings.TEAM[row];
-    const score = scores[teamName] ?? buildScore(row);
+function StandingRow({ score }: { score: Score }) {
     return (
-        <tr key={row} >
+        <tr >
             {headers.map(header => {
                 return (
-                    <td style={header == "TEAM" ? { backgroundColor: standings["COLOR"][row] } : {}}>
+                    <td style={header == "TEAM" ? { backgroundColor: score.COLOR } : {}}>
                         {score[header]}
                     </td>);
             })}

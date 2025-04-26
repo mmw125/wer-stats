@@ -1,6 +1,6 @@
-import { FormControl, InputGroup, Table } from "react-bootstrap";
+import { FormControl, InputGroup, Table, ToggleButton } from "react-bootstrap";
 import { default as schedule } from "./assets/schedule.json";
-import React from "react";
+import React, { useState } from "react";
 
 type ScheduleHeader = keyof typeof schedule;
 type ScheduleRow = keyof (typeof schedule)["DATE"];
@@ -108,6 +108,7 @@ export function Schedule({ modifyStandings }: ScheduleProps) {
     ) as Array<ScheduleRow>;
 
     const [games, setGames] = React.useState<ManualGameScore[]>([]);
+    const [hidePlayedGames, setHidePlayedGames] = useState(false);
 
     React.useEffect(() => {
         const scores: ManualGameScore[] = [];
@@ -119,40 +120,55 @@ export function Schedule({ modifyStandings }: ScheduleProps) {
     }, [modifyStandings]);
 
     return (
-        <Table id="standings" striped bordered responsive>
-            <thead>
-                <tr key={"header"}>
-                    {headers.map((key) => (
-                        <th>{headerTranslation.get(key) ?? key}</th>
+        <>
+            <Table id="standings" striped bordered responsive>
+                <thead>
+                    <tr key={"header"}>
+                        {headers.map((key) => (
+                            <th>{headerTranslation.get(key) ?? key}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {games.map((game, i) => (
+                        <GameDisplay
+                            key={game.date + "key"}
+                            game={game}
+                            hide={hidePlayedGames && game.locked}
+                            setManualScore={(manualScore) => {
+                                const newScores = [...games];
+                                newScores[i] = manualScore;
+                                setGames(newScores);
+                                modifyStandings(
+                                    newScores.filter((score) => score.homeTeam != "")
+                                );
+                            }}
+                        />
                     ))}
-                </tr>
-            </thead>
-            <tbody>
-                {games.map((game, i) => (
-                    <GameDisplay
-                        key={game.date + "key"}
-                        game={game}
-                        setManualScore={(manualScore) => {
-                            const newScores = [...games];
-                            newScores[i] = manualScore;
-                            setGames(newScores);
-                            modifyStandings(
-                                newScores.filter((score) => score.homeTeam != "")
-                            );
-                        }}
-                    />
-                ))}
-            </tbody>
-        </Table>
+                </tbody>
+            </Table>
+            <ToggleButton
+                id="toggle-check"
+                type="checkbox"
+                variant="primary"
+                checked={hidePlayedGames}
+                value="1"
+                onChange={(e) => setHidePlayedGames(e.currentTarget.checked)}
+            >
+                Hide Played Games
+            </ToggleButton>
+        </>
     );
 }
 
 export function GameDisplay({
     game,
     setManualScore,
+    hide
 }: {
     game: ManualGameScore;
     setManualScore: (manualScore: ManualGameScore) => void;
+    hide?: boolean
 }) {
     const { happened, locked } = game;
     const buildForm = (header: ScheduleHeader) => {
@@ -184,20 +200,14 @@ export function GameDisplay({
 
         return (
             <>
-                <InputGroup>
+                <InputGroup style={{ maxWidth: "100px", minWidth: "50px" }}>
                     <FormControl
                         type="number"
-                        width={"20px"}
+                        style={{ minWidth: "50px" }}
                         id="inputGroup-sizing-sm"
                         onChange={onFormChange}
                         defaultValue={header === "SCORE" ? game.homeScore : game.awayScore}
                     />
-                </InputGroup>
-                <InputGroup style={{
-                    display: "block",
-                    "marginLeft": "auto",
-                    "marginRight": "auto"
-                }}>
 
                     <InputGroup.Checkbox
 
@@ -215,7 +225,7 @@ export function GameDisplay({
     const homeWins = game.homeScore > game.awayScore;
 
     return (
-        <tr key={game.date + " " + game.homeTeam}>
+        <tr key={game.date + " " + game.homeTeam} style={hide ? { display: "none" } : {}}>
             {headers.map((header) => {
                 if (header === "SCORE") {
                     return <td>{happened || locked ? game.homeScore : buildForm(header)}</td>;

@@ -1,6 +1,5 @@
 import { FormControl, InputGroup, Table, ToggleButton } from "react-bootstrap";
 import { default as schedule } from "./assets/schedule.json";
-import { default as standings } from "./assets/standings.json";
 import React, { useState } from "react";
 
 type ScheduleHeader = keyof typeof schedule;

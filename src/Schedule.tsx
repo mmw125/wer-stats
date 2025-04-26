@@ -1,5 +1,6 @@
 import { FormControl, InputGroup, Table, ToggleButton } from "react-bootstrap";
 import { default as schedule } from "./assets/schedule.json";
+import { default as standings } from "./assets/standings.json";
 import React, { useState } from "react";
 
 type ScheduleHeader = keyof typeof schedule;
@@ -24,6 +25,7 @@ export interface ScheduleProps {
 }
 
 export interface ManualGameScore {
+    id: string;
     date: string;
     homeTeam: string;
     homeScore: number;
@@ -61,7 +63,8 @@ function buildManualGameScore(row: ScheduleRow): ManualGameScore {
         awayScore,
         awayTryPoint,
         happened,
-        locked: happened
+        locked: happened,
+        id: row
     };
 
     switch (row) {
@@ -109,6 +112,23 @@ export function Schedule({ modifyStandings }: ScheduleProps) {
 
     const [games, setGames] = React.useState<ManualGameScore[]>([]);
     const [hidePlayedGames, setHidePlayedGames] = useState(false);
+    const buildGame = (game: ManualGameScore, i: number) => {
+        return (
+            <GameDisplay
+                key={game.id + "key"}
+                game={game}
+                hide={hidePlayedGames && game.locked}
+                setManualScore={(manualScore) => {
+                    const newScores = [...games];
+                    newScores[i] = manualScore;
+                    setGames(newScores);
+                    modifyStandings(
+                        newScores.filter((score) => score.homeTeam != "")
+                    );
+                }}
+            />
+        )
+    }
 
     React.useEffect(() => {
         const scores: ManualGameScore[] = [];
@@ -130,21 +150,7 @@ export function Schedule({ modifyStandings }: ScheduleProps) {
                     </tr>
                 </thead>
                 <tbody>
-                    {games.map((game, i) => (
-                        <GameDisplay
-                            key={game.date + "key"}
-                            game={game}
-                            hide={hidePlayedGames && game.locked}
-                            setManualScore={(manualScore) => {
-                                const newScores = [...games];
-                                newScores[i] = manualScore;
-                                setGames(newScores);
-                                modifyStandings(
-                                    newScores.filter((score) => score.homeTeam != "")
-                                );
-                            }}
-                        />
-                    ))}
+                    {games.map(buildGame)}
                 </tbody>
             </Table>
             <ToggleButton
@@ -157,6 +163,7 @@ export function Schedule({ modifyStandings }: ScheduleProps) {
             >
                 Hide Played Games
             </ToggleButton>
+            <br /><br />
         </>
     );
 }

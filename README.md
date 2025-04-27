@@ -1,7 +1,12 @@
 # WER Standings Calculator
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/vercel/tree/main/examples/vite-react&template=vite-react)
+Check it out! This is currently deployed at [wer-stats.vercel.app](wer-stats.vercel.app)
 
+### Install App
+
+```shell
+npm install
+```
 
 ### Start App
 

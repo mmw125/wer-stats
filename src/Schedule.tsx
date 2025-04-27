@@ -92,7 +92,7 @@ function buildManualGameScore(row: ScheduleRow): ManualGameScore {
             break;
         case "12":
             score.homeScore = 0;
-            score.awayScore = 40;
+            score.awayScore = 41;
             score.awayTryPoint = true;
             score.locked = true;
             break;

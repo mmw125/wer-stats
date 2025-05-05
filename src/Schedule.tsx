@@ -15,7 +15,7 @@ const headers: Array<ScheduleHeader> = [
     "AWAY",
     "SCORE.1",
 ];
-const badTeams = [];
+const badTeams: string[] = [];
 // const RED = "#E46464";
 const GREEN = "#BAE464"
 

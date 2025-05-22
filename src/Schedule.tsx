@@ -128,6 +128,19 @@ function buildManualGameScore(row: ScheduleRow): ManualGameScore {
             score.awayTryPoint = true;
             score.locked = true;
             break;
+        case "18":
+            score.homeScore = 49;
+            score.awayScore = 12;
+            score.homeTryPoint = true;
+            score.locked = true;
+            break;
+        case "19":
+            score.homeScore = 31;
+            score.awayScore = 22;
+            score.homeTryPoint = true;
+            score.awayTryPoint = true;
+            score.locked = true;
+            break;
     }
     return score;
 }

@@ -141,6 +141,20 @@ function buildManualGameScore(row: ScheduleRow): ManualGameScore {
             score.awayTryPoint = true;
             score.locked = true;
             break;
+        case "20":
+            score.homeScore = 53;
+            score.awayScore = 21;
+            score.homeTryPoint = true;
+            score.awayTryPoint = false;
+            score.locked = true;
+            break;
+        case "21":
+            score.homeScore = 38;
+            score.awayScore = 26;
+            score.homeTryPoint = true;
+            score.awayTryPoint = true;
+            score.locked = true;
+            break;
     }
     return score;
 }
